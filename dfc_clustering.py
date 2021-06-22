@@ -3,22 +3,17 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from pathlib import Path
 from sklearn.cluster import KMeans
+from utils import create_features_matrix
 from mlinsights.mlmodel import KMeansL1L2
 from sklearn.preprocessing import StandardScaler
 
 if __name__ == '__main__':
-    window_folder = '60_10'
+    window_folder = '45_1'
+    TH = 0.2
     norm = 'L1'
     scaled = "scaled"
     in_dir = Path('/media/neuro/LivnyLab/Research/TBI_magneton/Analyses/MatriLan/matrices/Mat_180521/FC/Dynamic_Correlations/r_val/no_TH')
-    list_of_vecs = []
-    csv_files_list = list(in_dir.joinpath(window_folder).rglob('*.csv'))
-    for p in tqdm(csv_files_list):
-        correlation_mat = np.loadtxt(p, delimiter=',')
-        n_rows = correlation_mat.shape[0]
-        correlation_vec = correlation_mat[np.tril_indices(n_rows, -1)]
-        list_of_vecs.append(correlation_vec)
-    features_mat = np.array(list_of_vecs)
+    features_mat = create_features_matrix(in_dir, window_folder, TH)
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(features_mat)    # fisher transformation
     sse = []

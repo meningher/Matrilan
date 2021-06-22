@@ -10,7 +10,7 @@ import matplotlib.cm as cm
 import numpy as np
 
 if __name__ == '__main__':
-    window_folder = '30_1'
+    window_folder = '60_10'
     norm = 'L1'
     scaled = "scaled"
     in_dir = Path('/media/neuro/LivnyLab/Research/TBI_magneton/Analyses/MatriLan/matrices/Mat_180521/FC/Dynamic_Correlations/r_val/no_TH')
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     scaler = StandardScaler()
     scaled_features = scaler.fit_transform(features_mat)  # fisher transformation
 
-    for n_clusters in range(2, 8):
+    for n_clusters in tqdm(range(2, 8)):
         # Create a subplot with 1 row and 2 columns
         fig, (ax1, ax2) = plt.subplots(1, 2)
         fig.set_size_inches(18, 7)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         sample_silhouette_values = silhouette_samples(scaled_features, cluster_labels)
 
         y_lower = 10
-        for i in range(n_clusters):
+        for i in tqdm(range(n_clusters)):
             # Aggregate the silhouette scores for samples belonging to
             # cluster i, and sort them
             ith_cluster_silhouette_values = sample_silhouette_values[cluster_labels == i]
@@ -101,5 +101,5 @@ if __name__ == '__main__':
 
         plt.suptitle(("Silhouette analysis for KMeans clustering on sample data with n_clusters = %d" % n_clusters),
                      fontsize=14, fontweight='bold')
-
-    plt.show()
+        full_path = ('/media/neuro/LivnyLab/Research/TBI_magneton/Analyses/MatriLan/matrices/Mat_180521/FC/Dynamic_Correlations/r_val/no_TH/silhouette_' + str(n_clusters) + '_' + window_folder + '_' + norm + '_' + scaled)
+        plt.savefig(full_path)
