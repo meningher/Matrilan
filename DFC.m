@@ -151,7 +151,7 @@ folder_info=dir(Int_folder);  % turns the folder of all the subjects to a struct
 window_size_vols= fix(window_size/TR); % the number of volumes in each sliding window
 
 
-for jess = 3:length(folder_info) % runs on the subjects rest scans
+for jess = 3:3(folder_info) % runs on the subjects rest scans
     if contains(folder_info(jess).name,'Int') &&  contains(folder_info(jess).name,'.csv')% looking for intensity csv files
         
         int_path=[Int_folder '/' folder_info(jess).name];
@@ -162,7 +162,7 @@ for jess = 3:length(folder_info) % runs on the subjects rest scans
         for window = 1:num_of_wind %running on windows
             
             mini_int_mat=intensity_mat(:,(window-1)*lag+1:(window-1)*lag+window_size_vols);
-            
+            disp(mini_int_mat)
             % r and p unordered
             [r_mat, p_mat]= corrcoef(mini_int_mat'); %%%%%%%%%%%%%CHANGEDDDDDDDDD FROM CORR TO CORRCOEF 8.10.20
             
@@ -297,7 +297,7 @@ for jess = 3:length(folder_info) % runs on the subjects rest scans
                     end
                     
                     individual_output_path=[output_folder '/' value_names{winston} '/' th_names{coach}];
-                    folder_name=[ individual_output_path '/' folder_info(jess).name(1:sum_ID+3) '_' num2str(window_size_vols) '_' num2str(lag)];
+                    folder_name=[ individual_output_path '/' folder_info(jess).name(1:sum_ID+3) '_' num2str(window_size_vols) '_' num2str(lag) '_Tapered' ];
                     
                     if ~exist(folder_name, 'dir')
                     mkdir(folder_name); % creates an empty directory of the subject's name

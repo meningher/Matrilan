@@ -4,6 +4,7 @@ from tqdm import tqdm
 from pathlib import Path
 from sklearn.cluster import KMeans
 from utils import create_features_matrix
+from utils import calc_subject_exemplars
 from mlinsights.mlmodel import KMeansL1L2
 from sklearn.preprocessing import StandardScaler
 
@@ -12,10 +13,18 @@ if __name__ == '__main__':
     TH = 0.2
     norm = 'L1'
     scaled = "scaled"
+    number_of_subjects = 50
     in_dir = Path('/media/neuro/LivnyLab/Research/TBI_magneton/Analyses/MatriLan/matrices/Mat_180521/FC/Dynamic_Correlations/r_val/no_TH')
-    features_mat = create_features_matrix(in_dir, window_folder, TH)
+    [features_mat, num_of_windows] = create_features_matrix(in_dir, window_folder, TH, number_of_subjects)
     scaler = StandardScaler()
-    scaled_features = scaler.fit_transform(features_mat)    # fisher transformation
+    all_subs_features_map = []
+    for sub_num in range(number_of_subjects):
+        one_subject_features_mat = features_mat[int(sub_num*num_of_windows):int(sub_num*num_of_windows+num_of_windows)]
+        one_subject_exemplar_mat = calc_subject_exemplars(one_subject_features_mat, peaks_threshold=0.3, plot=False)
+        all_subs_exemplars_mat = np.c_[all_subs_features_map, one_subject_exemplar_mat]
+# here I need to take all the matrices coming back from calc_subject_exemplars and append them to one matrix-->all_subs_features_map
+
+    scaled_features = scaler.fit_transform(all_subs_exemplars_mat)    # fisher transformation
     sse = []
     K_range = range(1, 11)
     for k in tqdm(K_range):
