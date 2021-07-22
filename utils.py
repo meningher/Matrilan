@@ -1,3 +1,4 @@
+import shutil
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -23,14 +24,21 @@ def create_features_matrix(in_dir: Path, window_folder: str, threshold=0.2, numb
     return features, num_of_windows
 
 
-def calc_subject_exemplars(subject_features_mat, peaks_threshold=0.3, plot=False):
+def calc_subject_exemplars(subject_features_mat, peaks_threshold=0.2, plot=False):
     features_z_score = zscore(subject_features_mat, axis=0)
     exemplar_mean = np.abs(features_z_score.mean(axis=1))
-    #if plot:
-    plot
-    plt.plot(exemplar_mean)
-    plt.show()
+    if plot:
+        plt.plot(exemplar_mean)
+        plt.show()
 
     peaks_idx = np.argwhere(exemplar_mean >= peaks_threshold).ravel()
 
     return subject_features_mat[peaks_idx, :]
+
+
+def copy_data(src_dir, dst_dir):
+    for p in tqdm(list(Path(src_dir).rglob('*.csv'))):
+        sliding_window, patient = p.parts[-3:-1]
+        out_dir = Path(dst_dir).joinpath(sliding_window, patient)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(p, out_dir)
