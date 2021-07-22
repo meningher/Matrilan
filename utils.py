@@ -8,7 +8,7 @@ from scipy.stats import zscore
 
 def create_features_matrix(in_dir: Path, window_folder: str, threshold=0.2, number_of_subjects=50):
     list_of_vecs = []
-    csv_files_list = list(in_dir.joinpath(window_folder).rglob('*.csv'))
+    csv_files_list = sorted(list(in_dir.joinpath(window_folder).rglob('*.csv')))
     for p in tqdm(csv_files_list):
         correlation_mat = np.loadtxt(p, delimiter=',')
         n_rows = correlation_mat.shape[0]
